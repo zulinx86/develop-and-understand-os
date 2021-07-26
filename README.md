@@ -1,1 +1,2 @@
-# develop-and-understand-os
+# macOS で「作って理解するOS」
+
