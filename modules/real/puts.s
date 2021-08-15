@@ -23,7 +23,7 @@ puts:
 	mov	ah,0x0e		; function to display a character
 	mov	bx,0x0000	; page number and color
 	cld			; forward direction
-.10L
+.10L:
 	lodsb			; AL = *SI++;
 
 	cmp	al,0
@@ -31,7 +31,7 @@ puts:
 
 	int	0x10
 	jmp	.10L
-.10E
+.10E:
 
 	; restore registers
 	pop	si
