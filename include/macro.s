@@ -14,3 +14,13 @@
 		add	sp,(__BITS__ >> 3) * (%0 - 1)
 	%endif
 %endmacro
+
+
+; Drive Parameter
+struc drive
+	.no	resw	1	; drive number
+	.cyln	resw	1	; cylinder
+	.head	resw	1	; head
+	.sect	resw	1	; sector
+endstruc
+
