@@ -156,3 +156,59 @@ vram_font_copy:
 
 	ret
 
+; void vram_bit_copy(bit, vram, flag);
+;
+; Arguments
+; - bit		: bit pattern for output
+; - vram	: address to vram
+; - flag	: plane (0bIRGB)
+; - color	: color
+;
+; Return value
+; - none
+vram_bit_copy:
+	; stack frame
+	; EBP+ 0 | original EBP
+	; EBP+ 4 | return address (EIP)
+	; -------|-------
+	; EBP+ 8 | bit
+	; EBP+12 | vram
+	; EBP+16 | flag
+	; EBP+20 | color
+	push	ebp
+	mov	ebp,esp
+
+	; save registers
+	push	eax
+	push	ebx
+	push	edi
+
+	; main part
+	mov	edi,[ebp+12]		; EDI = vram;
+	movzx	eax,byte [ebp+16]	; EAX = flag;
+	movzx	ebx,word [ebp+20]	; EBX = color;
+
+	test	bl,al			; ZF = (BL & AL);
+	setz	bl			; BL = ZF ? 0x01 : 0x00;
+	dec	bl			; BL--; // 0x00 or 0xFF
+
+	mov	al,[ebp+8]		; AL = bit
+	mov	ah,al
+	not	ah			; AH = ~AL;
+
+	and	ah,[edi]		; AH &= *EDI;
+	and	al,bl			; AL &= BL;
+	or	al,ah			; AL |= AH;
+
+	mov	[edi],al
+
+	; restore registers
+	pop	edi
+	pop	ebx
+	pop	eax
+
+	; delete stack frame
+	mov	esp,ebp
+	pop	ebp
+
+	ret
