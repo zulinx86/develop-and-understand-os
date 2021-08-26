@@ -23,10 +23,20 @@ kernel:
 	mov	[FONT_ADDR],eax		; FONT_ADDR[0] = EAX;
 
 	;-------------------------------
-	; Initialize
+	; Initialize Interruption
 	;-------------------------------
 	cdecl	init_int
+	cdecl	init_pic
+
 	set_vect	0x00,int_zero_div
+	set_vect	0x28,int_rtc
+
+	cdecl	rtc_int_en,0x10
+
+	outp	0x21,0b1111_1011	; enable secondary PIC
+	outp	0xa1,0b1111_1110	; enable RTC
+
+	sti
 
 	;-------------------------------
 	; Display Something
@@ -40,20 +50,12 @@ kernel:
 	cdecl	draw_str,25,14,0x010F,.s0
 
 	;-------------------------------
-	; Call Interrupt
-	;-------------------------------
-	int	0
-
-;	mov	al,0
-;	div	al
-
-	;-------------------------------
 	; Display Time
 	;-------------------------------
 .10L:					; do
 					; {
-	cdecl	rtc_get_time,RTC_TIME	;   EAX = rtc_get_time(RTC_TIME);
-	cdecl	draw_time,72,0,0x0700,dword [RTC_TIME]
+	mov	eax,[RTC_TIME]
+	cdecl	draw_time,72,0,0x0700,eax
 	jmp	.10L			; } while (1);
 
 	;-------------------------------
@@ -86,7 +88,9 @@ RTC_TIME:
 %include "../modules/protect/itoa.s"
 %include "../modules/protect/rtc.s"
 %include "../modules/protect/draw_time.s"
-%include "modules/interrupt.s"
+%include "../modules/protect/interrupt.s"
+%include "../modules/protect/pic.s"
+%include "../modules/protect/int_rtc.s"
 
 	;-------------------------------
 	; Padding
