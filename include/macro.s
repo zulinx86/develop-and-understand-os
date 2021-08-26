@@ -24,3 +24,20 @@ struc drive
 	.sect	resw	1	; sector
 endstruc
 
+; Set Interruption Vector
+; Usage:
+;	set_vect	number,handler
+%macro	set_vect 1-*.nolist
+	push	eax
+	push	edi
+
+	mov	edi,VECT_BASE+(%1*8)
+	mov	eax,%2
+
+	mov	[edi+0],ax
+	shr	eax,16
+	mov	[edi+6],ax
+
+	pop	edi
+	pop	eax
+%endmacro
