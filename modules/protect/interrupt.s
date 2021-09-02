@@ -90,6 +90,8 @@ int_zero_div:
 ; int_stop : interruption for stop
 ;   display stack and loop infinitely
 int_stop:
+	sti
+
 	cdecl	draw_str,25,15,0x060f,eax
 
 	mov	eax,[esp+0]

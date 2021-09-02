@@ -1,3 +1,7 @@
+;************************************************************************
+; Macros
+;************************************************************************
+
 ; Function Call
 ; Usage:
 ;	cdecl	func [,param1[,param2[,...]]]
@@ -15,14 +19,6 @@
 	%endif
 %endmacro
 
-
-; Drive Parameter
-struc drive
-	.no	resw	1	; drive number
-	.cyln	resw	1	; cylinder
-	.head	resw	1	; head
-	.sect	resw	1	; sector
-endstruc
 
 ; Set Interruption Vector
 ; Usage:
@@ -42,6 +38,7 @@ endstruc
 	pop	eax
 %endmacro
 
+
 ; Output Port
 ; Usage:
 ;	outp	number,value
@@ -49,3 +46,28 @@ endstruc
 	mov	al,%2
 	out	%1,al
 %endmacro
+
+
+;************************************************************************
+; Structs
+;************************************************************************
+
+; Drive Parameter
+struc drive
+	.no	resw	1		; drive number
+	.cyln	resw	1		; cylinder
+	.head	resw	1		; head
+	.sect	resw	1		; sector
+endstruc
+
+
+; Ring Buffer
+%define	RING_ITEM_SIZE	(1 << 4)
+%define RING_INDEX_MASK	(RING_ITEM_SIZE - 1)
+
+struc ring_buff
+	.rp	resd	1		; read pointer
+	.wp	resd	1		; write pointer
+	.item	resb	RING_ITEM_SIZE	; buffer
+endstruc
+
